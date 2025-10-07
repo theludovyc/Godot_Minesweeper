@@ -1,23 +1,30 @@
 extends Button
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
 var id:int
+
+var flag := false;
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
 	
-func _gui_input(event):
-	if event is InputEventMouseButton:
+func _gui_input(event:InputEvent):
 		if !disabled:
-			if event.button_index == 1:
-				var pr = get_parent()
+			var pr = get_parent()
+			if event.is_action_pressed("left_mouse"):
 				pr.checkTileFromId(id)
-			if event.button_index == 2:
-				text = str(9)
+				return
+				
+			if event.is_action_pressed("right_mouse"):
+				if flag:
+					text = ""
+					flag = false
+					pr.flag_mine(id, flag)
+					return
+				else:
+					text = str(9)
+					flag = true
+					pr.flag_mine(id, flag)
 	
 func see(i):
 	if i == 9:
@@ -28,6 +35,7 @@ func see(i):
 		
 	disabled=true
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+
+
+func _on_pressed() -> void:
+	pass # Replace with function body.
