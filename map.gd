@@ -48,21 +48,22 @@ func checkTile(pos:Vector2i):
 	
 	if z == 9:
 		mine_triggered.emit()
+		return
 	
 	if z == 0:
-		var posArray:PackedVector2Array = [
-			Vector2(1, 0),
-			Vector2(1, 1),
-			Vector2(1, -1),
-			Vector2(-1, 0),
-			Vector2(-1, 1),
-			Vector2(-1, -1),
-			Vector2(0, 1),
-			Vector2(0, -1)
+		var posArray = [
+			Vector2i(1, 0),
+			Vector2i(1, 1),
+			Vector2i(1, -1),
+			Vector2i(-1, 0),
+			Vector2i(-1, 1),
+			Vector2i(-1, -1),
+			Vector2i(0, 1),
+			Vector2i(0, -1)
 		]
 		
 		for i_pos in posArray:
-			checkTile(Vector2i(pos.x + i_pos.x, pos.y + i_pos.y))
+			checkTile(pos + i_pos)
 
 func checkTileFromId(id:int):
 	var x = id%m_width
@@ -78,19 +79,19 @@ func checkTileAndArround(pos:Vector2i):
 	
 	button.see(getTileVec(pos))
 	
-	var posArray:PackedVector2Array = [
-		Vector2(1, 0),
-		Vector2(1, 1),
-		Vector2(1, -1),
-		Vector2(-1, 0),
-		Vector2(-1, 1),
-		Vector2(-1, -1),
-		Vector2(0, 1),
-		Vector2(0, -1)
+	var posArray = [
+		Vector2i(1, 0),
+		Vector2i(1, 1),
+		Vector2i(1, -1),
+		Vector2i(-1, 0),
+		Vector2i(-1, 1),
+		Vector2i(-1, -1),
+		Vector2i(0, 1),
+		Vector2i(0, -1)
 	]
 	
 	for i_pos in posArray:
-		var next_pos = Vector2i(pos.x + i_pos.x, pos.y + i_pos.y)
+		var next_pos = pos + i_pos
 		
 		var z = getTileVec(next_pos)
 		
@@ -109,8 +110,6 @@ func createMap(width:int, mine_number:int):
 	
 	array.resize(ww)
 	array.fill(0)
-	
-	var ww4=m_width*m_width/4
 	
 	for i in range(mine_number):
 		array[i] = 9
