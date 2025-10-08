@@ -12,8 +12,10 @@ func _gui_input(event:InputEvent):
 		if !disabled:
 			var pr = get_parent()
 			if event.is_action_pressed("left_mouse"):
-				pr.flag_mine(id, false)
 				pr.checkTileFromId(id)
+				
+				if flag:
+					pr.flag_mine(id, false)
 				return
 				
 			if event.is_action_pressed("right_mouse"):

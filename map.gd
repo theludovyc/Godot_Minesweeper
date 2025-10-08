@@ -19,19 +19,14 @@ func popButton(id):
 	var button=ButtonPrefab.instantiate()
 	button.id=id
 	add_child(button)
-
-func getTile(x, y) -> int:
-	if x<0 or x>m_width-1 or y<0 or y>m_width-1:
-		return -1
-	return array[x+y*m_width]
 	
 func getTileVec(pos:Vector2i) -> int:
-	return getTile(pos.x, pos.y)
-		
-func isMine(x, y):
-	if getTile(x, y) == 9:
-		return 1
-	return 0
+	if pos.x<0 or pos.x>m_width-1 or pos.y<0 or pos.y>m_width-1:
+		return -1
+	return array[pos.x+pos.y*m_width]
+	
+func isMineVec(vec:Vector2i) -> bool:
+	return getTileVec(vec) == 9
 		
 func checkTile(pos:Vector2i):
 	var z := getTileVec(pos)
@@ -123,16 +118,32 @@ func createMap(width:int, mine_number:int):
 			mines[i] = false
 			continue
 		else:
-			var x = i%m_width
-			var y = i/m_width
+			var pos := Vector2i(i%m_width, i/m_width)
 			
-			array[i] = isMine(x, y+1) + isMine(x, y-1) + isMine(x+1,y) + isMine(x+1, y+1) + isMine(x+1, y-1) + isMine(x-1, y) + isMine(x-1, y+1) + isMine(x-1, y-1)
+			var posArray = [
+				Vector2i(1, 0),
+				Vector2i(1, 1),
+				Vector2i(1, -1),
+				Vector2i(-1, 0),
+				Vector2i(-1, 1),
+				Vector2i(-1, -1),
+				Vector2i(0, 1),
+				Vector2i(0, -1)
+			]
+			
+			var tile_score := 0
+			
+			for i_pos in posArray:
+				if isMineVec(pos + i_pos):
+					tile_score += 1
+			
+			array[i] = tile_score
 	
 	var find_first_pos = false;
 	while(not find_first_pos):
 		var first_pos = Vector2(randi_range(1, m_width-2), randi_range(1, m_width-2))
 		
-		if (not isMine(first_pos.x, first_pos.y)):
+		if (not isMineVec(first_pos)):
 			find_first_pos = true
 			checkTileAndArround(first_pos)
 
