@@ -106,10 +106,7 @@ func createMap(width:int, mine_number:int):
 	array.resize(ww)
 	array.fill(0)
 	
-	for i in range(mine_number):
-		array[i] = 9
-		
-	array.shuffle()
+	array[2*m_width + 7] = 9
 	
 	for i in range(ww):
 		popButton(i)
