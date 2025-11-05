@@ -30,11 +30,7 @@ func _gui_input(event:InputEvent):
 					pr.flag_mine(id, flag)
 	
 func see(i):
-	if i == 9:
-		self_modulate = Color.RED
-	
-	if i > 0:
-		text = str(i)
+	text = str(i)
 		
 	disabled=true
 

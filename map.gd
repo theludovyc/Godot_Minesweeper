@@ -15,15 +15,25 @@ var mines:Dictionary
 
 var flag_number := 0
 
-func popButton(id):
+func popButton(id, value):
 	var button=ButtonPrefab.instantiate()
 	button.id=id
+	button.see(value)
 	add_child(button)
 	
-func getTileVec(pos:Vector2i) -> int:
+func popButtonVec(pos:Vector2i, value:int):
+	popButton(pos.x+pos.y*m_width, value)
+	
+func getTileVec(pos:Vector2i) -> float:
 	if pos.x<0 or pos.x>m_width-1 or pos.y<0 or pos.y>m_width-1:
 		return -1
 	return array[pos.x+pos.y*m_width]
+	
+func setTileVec(pos:Vector2i, value:int):
+	if pos.x<0 or pos.x>m_width-1 or pos.y<0 or pos.y>m_width-1:
+		return
+		
+	array[pos.x+pos.y*m_width] = value
 	
 func isMineVec(vec:Vector2i) -> bool:
 	return getTileVec(vec) == 9
@@ -106,43 +116,59 @@ func createMap(width:int, mine_number:int):
 	array.resize(ww)
 	array.fill(0)
 	
-	array[2*m_width + 7] = 9
+	var dragon_pos = Vector2(7, 2)
 	
-	for i in range(ww):
-		popButton(i)
+	setTileVec(dragon_pos, 13)
+	
+	var entrance_pos = Vector2i(9, 2)
+	
+	for j in range(width):
+		for i in range(width):
+			var current_pos := Vector2(i, j)
+			
+			var tile_value = 13
+			if current_pos != dragon_pos:
+				tile_value = roundi(current_pos.distance_to(dragon_pos))
+				
+			setTileVec(current_pos, tile_value)
+			
+			popButtonVec(current_pos, getTileVec(current_pos))
+	
+	#for i in range(ww):
+		#popButton(i, array[i])
 
-		if array[i] == 9:
-			mines[i] = false
-			continue
-		else:
-			var pos := Vector2i(i%m_width, i/m_width)
-			
-			var posArray = [
-				Vector2i(1, 0),
-				Vector2i(1, 1),
-				Vector2i(1, -1),
-				Vector2i(-1, 0),
-				Vector2i(-1, 1),
-				Vector2i(-1, -1),
-				Vector2i(0, 1),
-				Vector2i(0, -1)
-			]
-			
-			var tile_score := 0
-			
-			for i_pos in posArray:
-				if isMineVec(pos + i_pos):
-					tile_score += 1
-			
-			array[i] = tile_score
-	
-	var find_first_pos = false;
-	while(not find_first_pos):
-		var first_pos = Vector2(randi_range(1, m_width-2), randi_range(1, m_width-2))
-		
-		if (not isMineVec(first_pos)):
-			find_first_pos = true
-			checkTileAndArround(first_pos)
+		#if array[i] == 9:
+			#mines[i] = false
+			#continue
+		#else:
+			#var pos := Vector2i(i%m_width, i/m_width)
+			#
+			#var posArray = [
+				#Vector2i(1, 0),
+				#Vector2i(1, 1),
+				#Vector2i(1, -1),
+				#Vector2i(-1, 0),
+				#Vector2i(-1, 1),
+				#Vector2i(-1, -1),
+				#Vector2i(0, 1),
+				#Vector2i(0, -1)
+			#]
+			#
+			#var tile_score := 0
+			#
+			#for i_pos in posArray:
+				#if isMineVec(pos + i_pos):
+					#tile_score += 1
+			#
+			#array[i] = tile_score
+	#
+	#var find_first_pos = false;
+	#while(not find_first_pos):
+		#var first_pos = Vector2(randi_range(1, m_width-2), randi_range(1, m_width-2))
+		#
+		#if (not isMineVec(first_pos)):
+			#find_first_pos = true
+			#checkTileAndArround(first_pos)
 
 func flag_mine(id:int, enabled:bool):
 	if enabled:
